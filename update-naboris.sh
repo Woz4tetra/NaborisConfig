@@ -1,3 +1,4 @@
+if [ "$HOSTNAME" == "naboris" ]; then
 mkdir -p ./naboris/etc/network
 sudo cp /etc/network/interfaces ./naboris/etc/network/interfaces
 
@@ -7,3 +8,6 @@ mkdir -p ./naboris/etc/hostapd/hostapd.conf
 sudo cp /etc/hostapd/hostapd.conf ./naboris/etc/hostapd/dnsmasq.conf
 
 sudo cp /etc/rc.local ./naboris/etc
+else
+echo "Invalid host name!"
+fi

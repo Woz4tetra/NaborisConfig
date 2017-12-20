@@ -17,47 +17,14 @@ if [ "$_IP" ]; then
   printf "My IP address is %s\n" "$_IP"
 fi
 
-ip link set eth0 up
-ip addr add 10.76.76.1/24 dev eth0
+# iptables -A FORWARD --in-interface eth0 -j ACCEPT
+# iptables --table nat -A POSTROUTING --out-interface wlan0 -j MASQUERADE
 
-# route add default gateway 10.76.76.1
+iptables -F
+iptables -t nat -F
+iptables -X
+iptables -t nat -X
 
-# INET="wlan0"
-# INETIP="$(ifconfig $INET | sed -n '/inet addr/{s/.*addr://;s/ .*//;p}')"
-# route add default gw $INETIP $INET
-
-# sysctl -w net.ipv4.ip_forward=1
-# iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
-# iptables -t nat -A POSTROUTING -s 10.76.76.0/24 -o wlan0 -j MASQUERADE
-# iptables -t nat -A POSTROUTING -o $INET -j SNAT --to-source $INETIP
-
-# iptables -I FORWARD -i eth0 -o wlan0 -j ACCEPT
-# iptables -I FORWARD -i wlan0 -o eth0 -j ACCEPT
-
-IPT=/sbin/iptables
-LOCAL_IFACE=eth0
-INET_IFACE=wlan0
-INET_ADDRESS="$(ifconfig $INET_IFACE | sed -n '/inet addr/{s/.*addr://;s/ .*//;p}')"
-
-if [ ${#INET_ADDRESS} -gt 0 ]
-then
-	# Flush the tables
-	$IPT -F INPUT
-	$IPT -F OUTPUT
-	$IPT -F FORWARD
-
-	$IPT -t nat -P PREROUTING ACCEPT
-	$IPT -t nat -P POSTROUTING ACCEPT
-	$IPT -t nat -P OUTPUT ACCEPT
-
-	# Allow forwarding packets:
-	$IPT -A FORWARD -p ALL -i $LOCAL_IFACE -j ACCEPT
-	$IPT -A FORWARD -i $INET_IFACE -m state --state ESTABLISHED,RELATED -j ACCEPT
-
-	# Packet masquerading
-	$IPT -t nat -A POSTROUTING -o $INET_IFACE -j SNAT --to-source $INET_ADDRESS
-else
-	printf "Wifi not configured!!!\n"
-fi
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
 exit 0

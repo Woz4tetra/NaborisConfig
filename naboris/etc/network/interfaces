@@ -6,24 +6,16 @@
 # Include files from /etc/network/interfaces.d:
 source-directory /etc/network/interfaces.d
 
-auto lo
-iface lo inet loopback
-
+auto eth0
 iface eth0 inet static
-	address 10.76.76.1
-	network 10.76.76.0
+	address 10.76.76.2
 	netmask 255.255.255.0
 	gateway 10.76.76.1
+	dns-nameservers 10.76.76.1 8.8.8.8 8.8.4.4
 
-auto wlan0
 allow-hotplug wlan0
-iface wlan0 inet dhcp
-    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-#     dns-nameservers 8.8.8.8 8.8.4.4
-#	wpa-debug-level 3
-#	wpa-ssid "Apt420"
-#	wpa-psk "xfinity420"
+iface wlan0 inet static
+	address 192.168.200.1
+	netmask 255.255.255.0
+	gateway 192.168.200.1
 
-# allow-hotplug wlan1
-# iface wlan1 inet manual
-#     wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
